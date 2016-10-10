@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
+        <meta charset="utf-8">
+        <meta name="generator" content="Bootply" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>FubuMVC - Dynamic Subscriptions</title>
+		<link href="/content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+		<link href="/content/prism.css" rel="stylesheet" type="text/css" />
+		<link href="/content/theme.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+        
+
+        <link rel="apple-touch-icon" href="/bootstrap/img/apple-touch-icon.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="/bootstrap/img/apple-touch-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="/bootstrap/img/apple-touch-icon-114x114.png">
+
+
+        <!-- CSS code from Bootply.com editor -->
+        <link href="/content/affix.css" rel="stylesheet" type="text/css" />
+    </head>
+    
+    <!-- HTML code from Bootply.com editor -->
+    
+    <body  >
+
+<a href="https://github.com/darthfubumvc/fubumvc"><img style="z-index: 5000; position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+        
+        <nav class="navbar navbar-default navbar-fixed-top" role="banner">
+		  <div class="container">
+		    <div class="navbar-header">
+		      <a href="/" class="navbar-brand">FubuMVC 3.0</a>
+		    </div>
+		    <nav class="collapse navbar-collapse" role="navigation">
+		      <ul class="nav navbar-nav pull-right">
+            <li>
+              <a href="/getting_started">Getting Started</a>
+            </li>
+		        <li>
+		          <a href="/documentation">Documentation</a>
+		        </li>
+		        <li>
+<a href="https://gitter.im/darthfubumvc/fubumvc?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://camo.githubusercontent.com/da2edb525cde1455a622c58c0effc3a90b9a181c/68747470733a2f2f6261646765732e6769747465722e696d2f4a6f696e253230436861742e737667" alt="Join the chat at https://gitter.im/darthfubumvc/fubumvc" data-canonical-src="https://badges.gitter.im/Join%20Chat.svg" style="max-width:100%;"></a>
+		        </li>
+		      	<li><a href="/documentation/servicebus/serialization" title="Message Serializers">Previous</a></li>
+		      	<li><a href="/documentation/servicebus/lq" title="The LightningQueues Transport">Next</a></li>
+		      </ul>
+      <div class="navbar-form navbar-left" role="search">
+        <div class="form-group">
+          <input id="search" type="search" class="form-control" placeholder="Search">
+        </div>
+      </div>
+
+		    </nav>
+
+		  </div>
+		</nav>
+
+		  <div class="container">
+		  	<nav class="navbar-inverse">
+		  		<ol class="breadcrumb"><li><a href="/">FubuMVC</a></li><li><a href="/documentation">Documentation</a></li><li><a href="/documentation/servicebus">Service Bus Applications</a></li><li class="active">Dynamic Subscriptions</li></ol>
+		  	</nav>
+		  </div>
+
+		<!--main-->
+		<div class="container">
+			<div class="row">
+		      <!--left-->
+			    
+		      <div class="col-md-3" id="leftCol">
+				<ul class="nav nav-stacked affix" id="sidebar">
+
+		        </ul>
+
+		        	<h3 class="no-margin">Next</h3><p><a href="/documentation/servicebus/lq">The LightningQueues Transport</a></p>
+		        	<h3 class="no-margin">Previous</h3><a href="/documentation/servicebus/serialization">Message Serializers</a></p>
+
+		        </ul>
+		      </div><!--/left-->
+		      
+		      <!--right-->
+		      <div class="col-md-9">
+			      	<h1>Dynamic Subscriptions <a href="https://github.com/darthfubumvc/fubumvc/blob/master/documentation/documentation/servicebus/subscriptions.md"  class="text-muted small pull-right fa fa-github" style="margin-top: 10px"> Edit on GitHub</a></h1>
+			      
+			      	<hr />
+
+			      	<div id="main-pane">
+			      		<!--Title:Dynamic Subscriptions-->
+<!--Url:subscriptions-->
+<div class="alert alert-warning">If you're going to use dynamic subscriptions, we strongly recommend you use a separate "control" 
+channel to separate the messages that FubuMVC sends between running nodes to coordinate subscriptions. We also strongly recommend using
+some kind of durable subscription storage (explained below).</div>
+<p>In more advanced usages of the FubuMVC service bus, you may want your application to be able to
+subscribe to messages produced by a separate application without having to first configure
+the other application. The <em>subscriptions</em> feature is the mechanism to make this registration.</p>
+<p>First off, remember that FubuMVC service bus applications can be run as a cluster of executing nodes. Knowing that,
+subscriptions can be either:</p>
+<ul>
+<li><em>Global</em> - subscribe the entire cluster of nodes to specific messages published by another application</li>
+<li><em>Local</em> - subscribes <strong>only</strong> the executing node to specific messages published by another application</li>
+</ul>
+<p>Use a global subscription to take advantage of load balancing between nodes. Use a local subscription if you want the subscribed
+messages to be received by <strong>every node</strong> in the application cluster.</p>
+<p>See also:</p>
+<ul>
+<li><a href="/documentation/servicebus/channels">Channels and Transports</a> for information on static routing rules.</li>
+<li><a href="/documentation/servicebus/clustering">Load Balancing and Clusters</a> for information on establishing clusters of cooperative nodes for a single application</li>
+</ul>
+<h2>Configurating Subscriptions</h2>
+<p>Subscriptions are configured in the <code>FubuTransportRegistry&lt;T&gt;</code> class that establishes your application.</p>
+<p>First, assume you have a settings object for your service bus application that models both the incoming messages
+channel for your application cluster and a channel to a completely separate application:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class NodeSettings&#xD;&#xA;{&#xD;&#xA;    // This uri points to a different&#xD;&#xA;    // application&#xD;&#xA;    public Uri OtherApp { get; set; }&#xD;&#xA;&#xD;&#xA;    // This uri should be the shared&#xD;&#xA;    // channel that all nodes in the&#xD;&#xA;    // application cluster are reading&#xD;&#xA;    public Uri Receiving { get; set; }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>Now, to configure both a local subscription to each and every executing node and a global subscription for load balanced
+messages to all the nodes:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class LocalApp : FubuTransportRegistry&lt;NodeSettings&gt;&#xD;&#xA;{&#xD;&#xA;    public LocalApp()&#xD;&#xA;    {&#xD;&#xA;        // Explicitly set the logical descriptive&#xD;&#xA;        // name of this application. The default is&#xD;&#xA;        // derived from the name of the class&#xD;&#xA;        NodeName = &quot;MyApplication&quot;;&#xD;&#xA;&#xD;&#xA;        // Incoming messages&#xD;&#xA;        Channel(x =&gt; x.Receiving)&#xD;&#xA;            .ReadIncoming();&#xD;&#xA;&#xD;&#xA;        // Local subscription to only this node&#xD;&#xA;        SubscribeLocally()&#xD;&#xA;            .ToSource(x =&gt; x.OtherApp)&#xD;&#xA;            .ToMessage&lt;OtherAppMessage1&gt;();&#xD;&#xA;&#xD;&#xA;        // Global subscription to the all the&#xD;&#xA;        // running nodes in this clustered application&#xD;&#xA;        SubscribeAt(x =&gt; x.Receiving)&#xD;&#xA;            .ToSource(x =&gt; x.OtherApp)&#xD;&#xA;            .ToMessage&lt;OtherAppMessage2&gt;()&#xD;&#xA;            .ToMessage&lt;OtherAppMessage3&gt;();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<h2>How it works</h2>
+<p>FubuMVC exposes the idea of <em>subscription persistence</em> to store information about the list of active applications, nodes, and subscriptions
+in a durable storage of some sort. Between running nodes, FubuMVC has built in message types for <code>SubscriptionsChanged</code>,
+<code>SubscriptionRequested</code>, and <code>SubscriptionsRemoved</code> that it uses to coordinate subscriptions across running nodes and applications.</p>
+<p>When a FubuMVC service bus application is initialized, it:</p>
+<ul>
+<li>Persists information about the running node including where it's running and a Uri for a local reply channel to that specific node</li>
+<li>Loads the same information about any other nodes in the logical application cluster from the subscription storage</li>
+<li>Loads the list of previously persisted message subscriptions</li>
+<li>Sends out <code>SubscriptionRequested</code> messages to request dynamic subscriptions</li>
+</ul>
+<h2>Customizing Subscription Storage</h2>
+<p>The default subscription storage is just an in memory model, so you'll almost certainly want to replace that with some sort of
+durable storage mechanism if you're going to use subscriptions. To use a different subscription storage, you need an implementation
+of the <code>ISubscriptionPersistence</code> interface that you can plug into the application services like so:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class SubscriptionStorageApp : FubuTransportRegistry&lt;AppSettings&gt;&#xD;&#xA;{&#xD;&#xA;    public SubscriptionStorageApp()&#xD;&#xA;    {&#xD;&#xA;        // Plug in subscription storage backed by RavenDb&#xD;&#xA;        Services&#xD;&#xA;            .ReplaceService&lt;ISubscriptionPersistence, RavenDbSubscriptionPersistence&gt;();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>You can see a <a href="https://github.com/DarthFubuMVC/fubumvc/blob/2.2/src/FubuTransportation.RavenDb/RavenDbSubscriptionPersistence.cs">sample implementation for RavenDb here</a>.
+There will be a version backed by <a href="http://jasperfx.github.io/marten">Marten</a> soon as well.</p>
+<p>The subscription storage was largely based on the assumption that you'd probably opt to use a document database for the backing store.</p>
+
+			      	</div>
+
+			      	<hr />
+
+			      	<nav>
+				        <span>
+				        	<strong>Previous: </strong><a href="/documentation/servicebus/serialization">Message Serializers</a>
+
+				        </span>
+				        <span class="pull-right">
+
+				        	<strong>Next: </strong><a href="/documentation/servicebus/lq">The LightningQueues Transport</a>
+
+				        </span>
+			      	</nav>
+
+		      </div><!--/right-->
+		  	</div><!--/row-->
+		</div><!--/container-->
+
+
+    </body>
+
+
+    <foot>
+        <script type='text/javascript' src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script type='text/javascript' src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript" src="/content/embed.js"></script>
+        <script type="text/javascript" src="/content/prism.js"></script>
+        <script type="text/javascript" src="/content/sidebar.js"></script>
+        <script type="text/javascript" src="/content/affix.js"></script>
+
+<script>
+$('#search').keyup(function(e){
+  if(e.keyCode == 13) {
+    var search = $('#search').val();
+
+    var url = 'https://www.google.com/#q=site:darthfubumvc.github.io ' + search;
+    url = encodeURI(url);
+
+    //alert(url);
+
+    window.location.href = url;
+
+    e.stopPropagation();
+    if (e.cancelBubble!=null) e.cancelBubble = true;
+    return false;
+  }
+
+
+
+}); 
+
+</script>
+    </foot>
+</html>
+

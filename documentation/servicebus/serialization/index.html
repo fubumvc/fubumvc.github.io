@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
+        <meta charset="utf-8">
+        <meta name="generator" content="Bootply" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>FubuMVC - Message Serializers</title>
+		<link href="/content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+		<link href="/content/prism.css" rel="stylesheet" type="text/css" />
+		<link href="/content/theme.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+        
+
+        <link rel="apple-touch-icon" href="/bootstrap/img/apple-touch-icon.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="/bootstrap/img/apple-touch-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="/bootstrap/img/apple-touch-icon-114x114.png">
+
+
+        <!-- CSS code from Bootply.com editor -->
+        <link href="/content/affix.css" rel="stylesheet" type="text/css" />
+    </head>
+    
+    <!-- HTML code from Bootply.com editor -->
+    
+    <body  >
+
+<a href="https://github.com/darthfubumvc/fubumvc"><img style="z-index: 5000; position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+        
+        <nav class="navbar navbar-default navbar-fixed-top" role="banner">
+		  <div class="container">
+		    <div class="navbar-header">
+		      <a href="/" class="navbar-brand">FubuMVC 3.0</a>
+		    </div>
+		    <nav class="collapse navbar-collapse" role="navigation">
+		      <ul class="nav navbar-nav pull-right">
+            <li>
+              <a href="/getting_started">Getting Started</a>
+            </li>
+		        <li>
+		          <a href="/documentation">Documentation</a>
+		        </li>
+		        <li>
+<a href="https://gitter.im/darthfubumvc/fubumvc?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://camo.githubusercontent.com/da2edb525cde1455a622c58c0effc3a90b9a181c/68747470733a2f2f6261646765732e6769747465722e696d2f4a6f696e253230436861742e737667" alt="Join the chat at https://gitter.im/darthfubumvc/fubumvc" data-canonical-src="https://badges.gitter.im/Join%20Chat.svg" style="max-width:100%;"></a>
+		        </li>
+		      	<li><a href="/documentation/servicebus/cascading" title="Cascading Messages">Previous</a></li>
+		      	<li><a href="/documentation/servicebus/subscriptions" title="Dynamic Subscriptions">Next</a></li>
+		      </ul>
+      <div class="navbar-form navbar-left" role="search">
+        <div class="form-group">
+          <input id="search" type="search" class="form-control" placeholder="Search">
+        </div>
+      </div>
+
+		    </nav>
+
+		  </div>
+		</nav>
+
+		  <div class="container">
+		  	<nav class="navbar-inverse">
+		  		<ol class="breadcrumb"><li><a href="/">FubuMVC</a></li><li><a href="/documentation">Documentation</a></li><li><a href="/documentation/servicebus">Service Bus Applications</a></li><li class="active">Message Serializers</li></ol>
+		  	</nav>
+		  </div>
+
+		<!--main-->
+		<div class="container">
+			<div class="row">
+		      <!--left-->
+			    
+		      <div class="col-md-3" id="leftCol">
+				<ul class="nav nav-stacked affix" id="sidebar">
+
+		        </ul>
+
+		        	<h3 class="no-margin">Next</h3><p><a href="/documentation/servicebus/subscriptions">Dynamic Subscriptions</a></p>
+		        	<h3 class="no-margin">Previous</h3><a href="/documentation/servicebus/cascading">Cascading Messages</a></p>
+
+		        </ul>
+		      </div><!--/left-->
+		      
+		      <!--right-->
+		      <div class="col-md-9">
+			      	<h1>Message Serializers <a href="https://github.com/darthfubumvc/fubumvc/blob/master/documentation/documentation/servicebus/serialization.md"  class="text-muted small pull-right fa fa-github" style="margin-top: 10px"> Edit on GitHub</a></h1>
+			      
+			      	<hr />
+
+			      	<div id="main-pane">
+			      		<!--Title:Message Serializers-->
+<!--Url:serialization-->
+<div class="alert alert-info">
+The serialization mechanism and defaults are likely to change in Jasper. We will be deprecating the old Xml serialization and
+adding some basic content negotiation to enable teams to start moving individual applications to more efficient serializers. Jil? Protobuffers?
+To be determined.
+<br /><br />
+We also want to be able to configure serialization readers per incoming message type as a way of further decoupling applications without having
+to share a common library of message DTO types.
+</div>
+<p>To send a message, FubuMVC serializes the actual message body to a <code>byte[]</code> array before submitting
+the message through a configured channel. Upon receipt of a message, FubuMVC will deserialize the
+<code>byte[]</code> array back into the desired message body object. The deserialization is lazy and is evaluated
+on the first access of `Envelope as shown below:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public void ShowSerialization(Envelope envelope)&#xD;&#xA;{&#xD;&#xA;    // Accessing the Message property will&#xD;&#xA;    // invoke the deserialization&#xD;&#xA;    var message = envelope.Message;&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<h2>How a Serializer is Chosen</h2>
+<p>When a new message is about to be sent via a remote transport, FubuMVC selects a serializer based
+on this progression:</p>
+<ol>
+<li>If the <code>Envelope.ContentType</code> header is already set, choose a serializer matching that content type</li>
+<li>If there is a default serializer for the channel a message is being sent to, use that serializer</li>
+<li>Use the default serializer for the application</li>
+</ol>
+<p>Do note that it's valid for FubuMVC to send the same message with a different serialization content type
+to different channels in pub/sub scenarios.</p>
+<h2>Explicitly Choose Serialization per Message</h2>
+<p>If you drop down to the lower level <code>IEnvelopeSender</code> service, you can explicitly choose the serializer
+choice for a particular message. That usage is shown below:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public void SendEnvelope(IEnvelopeSender sender)&#xD;&#xA;{&#xD;&#xA;    var envelope = new Envelope&#xD;&#xA;    {&#xD;&#xA;        Message = new PingMessage(),&#xD;&#xA;        ContentType = &quot;application/json&quot;&#xD;&#xA;    };&#xD;&#xA;&#xD;&#xA;    sender.Send(envelope);&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<h2>Out of the Box Serializers</h2>
+<p>FubuMVC 3.0 has only a couple out of the box serializers:</p>
+<ul>
+<li>Xml serialization via a custom mechanism that was specifically used to maintain compatibility with the older
+Rhino Service Bus tooling</li>
+<li>Binary serialization using .Net's built in binary formatter</li>
+<li>JSON serialization via Newtonsoft.Json using the default JSON settings of the application</li>
+</ul>
+<h2>Custom Serializers</h2>
+<p>You can plug a new serializer into FubuMVC by implementing the <code>IMessageSerializer</code> interface as shown below:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class MyCustomSerializer : IMessageSerializer&#xD;&#xA;{&#xD;&#xA;    public void Serialize(object message, Stream stream)&#xD;&#xA;    {&#xD;&#xA;        // write the message object to the stream&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    public object Deserialize(Stream message)&#xD;&#xA;    {&#xD;&#xA;        // deserialize the stream into the message object&#xD;&#xA;        return null;&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    public string ContentType { get; } = &quot;text/special&quot;;&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>See the next section for configuration options to use your custom serializer.</p>
+<h2>Configuring Serialization Defaults</h2>
+<p>Below is some samples of adding custom serializers, configuring the default serialization for the application,
+and establishing the default serialization for a specific channel.</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class SerializedApp : FubuTransportRegistry&lt;AppSettings&gt;&#xD;&#xA;{&#xD;&#xA;    public SerializedApp()&#xD;&#xA;    {&#xD;&#xA;        // Register a custom message serializer&#xD;&#xA;        Services.AddService&lt;IMessageSerializer, MyCustomSerializer&gt;();&#xD;&#xA;&#xD;&#xA;        // Set a default serializer for the entire application&#xD;&#xA;        ServiceBus.DefaultSerializer&lt;BinarySerializer&gt;();&#xD;&#xA;&#xD;&#xA;        // Set a default serializer by choosing the content&#xD;&#xA;        // type of an installed serializer&#xD;&#xA;        ServiceBus.DefaultContentType(&quot;application/json&quot;);&#xD;&#xA;&#xD;&#xA;        // Set the default serializer for a single channel&#xD;&#xA;        Channel(x =&gt; x.Transactions)&#xD;&#xA;            .DefaultSerializer&lt;BinarySerializer&gt;();&#xD;&#xA;&#xD;&#xA;        // Set the default serializer for a specific channel&#xD;&#xA;        // by choosing the content type of an installed serializer&#xD;&#xA;        Channel(x =&gt; x.Control)&#xD;&#xA;            .DefaultContentType(&quot;application/xml&quot;);&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+
+			      	</div>
+
+			      	<hr />
+
+			      	<nav>
+				        <span>
+				        	<strong>Previous: </strong><a href="/documentation/servicebus/cascading">Cascading Messages</a>
+
+				        </span>
+				        <span class="pull-right">
+
+				        	<strong>Next: </strong><a href="/documentation/servicebus/subscriptions">Dynamic Subscriptions</a>
+
+				        </span>
+			      	</nav>
+
+		      </div><!--/right-->
+		  	</div><!--/row-->
+		</div><!--/container-->
+
+
+    </body>
+
+
+    <foot>
+        <script type='text/javascript' src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script type='text/javascript' src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript" src="/content/embed.js"></script>
+        <script type="text/javascript" src="/content/prism.js"></script>
+        <script type="text/javascript" src="/content/sidebar.js"></script>
+        <script type="text/javascript" src="/content/affix.js"></script>
+
+<script>
+$('#search').keyup(function(e){
+  if(e.keyCode == 13) {
+    var search = $('#search').val();
+
+    var url = 'https://www.google.com/#q=site:darthfubumvc.github.io ' + search;
+    url = encodeURI(url);
+
+    //alert(url);
+
+    window.location.href = url;
+
+    e.stopPropagation();
+    if (e.cancelBubble!=null) e.cancelBubble = true;
+    return false;
+  }
+
+
+
+}); 
+
+</script>
+    </foot>
+</html>
+

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
+        <meta charset="utf-8">
+        <meta name="generator" content="Bootply" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>FubuMVC - "Settings" Classes for Strong-Typed Configuration</title>
+		<link href="/content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+		<link href="/content/prism.css" rel="stylesheet" type="text/css" />
+		<link href="/content/theme.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+        
+
+        <link rel="apple-touch-icon" href="/bootstrap/img/apple-touch-icon.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="/bootstrap/img/apple-touch-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="/bootstrap/img/apple-touch-icon-114x114.png">
+
+
+        <!-- CSS code from Bootply.com editor -->
+        <link href="/content/affix.css" rel="stylesheet" type="text/css" />
+    </head>
+    
+    <!-- HTML code from Bootply.com editor -->
+    
+    <body  >
+
+<a href="https://github.com/darthfubumvc/fubumvc"><img style="z-index: 5000; position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+        
+        <nav class="navbar navbar-default navbar-fixed-top" role="banner">
+		  <div class="container">
+		    <div class="navbar-header">
+		      <a href="/" class="navbar-brand">FubuMVC 3.0</a>
+		    </div>
+		    <nav class="collapse navbar-collapse" role="navigation">
+		      <ul class="nav navbar-nav pull-right">
+            <li>
+              <a href="/getting_started">Getting Started</a>
+            </li>
+		        <li>
+		          <a href="/documentation">Documentation</a>
+		        </li>
+		        <li>
+<a href="https://gitter.im/darthfubumvc/fubumvc?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://camo.githubusercontent.com/da2edb525cde1455a622c58c0effc3a90b9a181c/68747470733a2f2f6261646765732e6769747465722e696d2f4a6f696e253230436861742e737667" alt="Join the chat at https://gitter.im/darthfubumvc/fubumvc" data-canonical-src="https://badges.gitter.im/Join%20Chat.svg" style="max-width:100%;"></a>
+		        </li>
+		      	<li><a href="/documentation/basics/bootstrapping" title="Bootstrapping FubuMVC Applications">Previous</a></li>
+		      	<li><a href="/documentation/basics/behaviors" title="Understanding the Behavior Model">Next</a></li>
+		      </ul>
+      <div class="navbar-form navbar-left" role="search">
+        <div class="form-group">
+          <input id="search" type="search" class="form-control" placeholder="Search">
+        </div>
+      </div>
+
+		    </nav>
+
+		  </div>
+		</nav>
+
+		  <div class="container">
+		  	<nav class="navbar-inverse">
+		  		<ol class="breadcrumb"><li><a href="/">FubuMVC</a></li><li><a href="/documentation">Documentation</a></li><li><a href="/documentation/basics">FubuMVC Basics</a></li><li class="active">&quot;Settings&quot; Classes for Strong-Typed Configuration</li></ol>
+		  	</nav>
+		  </div>
+
+		<!--main-->
+		<div class="container">
+			<div class="row">
+		      <!--left-->
+			    
+		      <div class="col-md-3" id="leftCol">
+				<ul class="nav nav-stacked affix" id="sidebar">
+
+		        </ul>
+
+		        	<h3 class="no-margin">Next</h3><p><a href="/documentation/basics/behaviors">Understanding the Behavior Model</a></p>
+		        	<h3 class="no-margin">Previous</h3><a href="/documentation/basics/bootstrapping">Bootstrapping FubuMVC Applications</a></p>
+
+		        </ul>
+		      </div><!--/left-->
+		      
+		      <!--right-->
+		      <div class="col-md-9">
+			      	<h1>"Settings" Classes for Strong-Typed Configuration <a href="https://github.com/darthfubumvc/fubumvc/blob/master/documentation/documentation/basics/settings.md"  class="text-muted small pull-right fa fa-github" style="margin-top: 10px"> Edit on GitHub</a></h1>
+			      
+			      	<hr />
+
+			      	<div id="main-pane">
+			      		<!--Title: "Settings" Classes for Strong-Typed Configuration-->
+<p>See <a href="https://jeremydmiller.com/2014/11/07/strong_typed_configuration/">How We Do Strong Typed Configuration</a> from Jeremy's blog
+for more context on FubuMVC's configuration strategy.</p>
+<p>FubuMVC is built with the idea of strong-typed configuration objects for runtime information like file paths, connection strings,
+and any kind of information you'd generally opt to put in external configuration sources like an app.config/web.config file in
+.Net.</p>
+<p>In effect, that means building your own application configuration in a <em>Settings</em> class like so:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class MyAppSettings&#xD;&#xA;{&#xD;&#xA;    public Uri Incoming { get; set; }&#xD;&#xA;&#xD;&#xA;    public string FileShare { get; set; }&#xD;&#xA;&#xD;&#xA;    public int PauseOnFailuresInMilliseconds { get; set; }&#xD;&#xA;        = 2000;&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>These <em>Settings</em> classes are injected into the underlying StructureMap container as part of application bootstrapping.
+To consume the Settings objects directly into your code, you can either access them directly by using service location
+from the application container, or better yet, just use constructor injection in your application code (assuming that the
+object is built with StructureMap in the first place):</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class HomeEndpoint&#xD;&#xA;{&#xD;&#xA;    private readonly MyAppSettings _settings;&#xD;&#xA;&#xD;&#xA;    public HomeEndpoint(MyAppSettings settings)&#xD;&#xA;    {&#xD;&#xA;        _settings = settings;&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    public string Index()&#xD;&#xA;    {&#xD;&#xA;        return $&quot;The file share is at {_settings.FileShare}&quot;;&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>If you absolutely have to do it this way, you can also pull settings objects out of the underlying container:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public void retrieve_settings()&#xD;&#xA;{&#xD;&#xA;    var runtime = FubuRuntime.Basic();&#xD;&#xA;&#xD;&#xA;    // retrieve the settings from the&#xD;&#xA;    // underlying IoC container&#xD;&#xA;    var settings = runtime.Get&lt;MyAppSettings&gt;();&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>Be aware that the Settings objects are scoped as singletons within the StructureMap container.</p>
+<p>Why did we do it this way and what are the advantages?</p>
+<ul>
+<li>Effectively decouples FubuMVC itself and your application from the mandatory presence of any kind of configuration file</li>
+<li>Improves traceability between configuration items and what code depends on that configuration</li>
+<li>Makes your application's configuration dependencies more apparent by just scanning the Settings classes</li>
+<li>Helps in automated testing or even just alternative deployment scenarios by being able to inject in different configuration at runtime or
+source the configuration from something other than the built in <code>System.Configuration</code> techniques</li>
+<li>Enables FubuMVC to apply configuration overrides from the application or extensions</li>
+</ul>
+<h2>External Configuration with System.Configuration</h2>
+<p>Behind the scenes, you can have the data resolution of each property in your Settings class built
+by using data from the old <a href="https://msdn.microsoft.com/en-us/library/610xe886.aspx">appSettings</a> section in an app.config file like this:</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;&quot; ?&gt;
+&lt;configuration&gt;
+    &lt;appSettings&gt;
+        &lt;add key=&quot;MyAppSettings.FileShare&quot; value=&quot;~/fileshare&quot; /&gt;
+    &lt;/appSettings&gt;
+&lt;/configuration&gt;
+
+</code></pre>
+<p>The naming convention is to make the key be &quot;[class name].[property name].&quot; There are, of course, a few caveats:</p>
+<ul>
+<li>The settings convention binding from appSettings can only work with properties, but not public fields. That will be changed in Jasper.</li>
+<li>The underlying data binding can handle any kind of primitive type (strings, enums, numbers, dates, booleans) and any other type that
+can be converted by the same <a href="https://github.com/DarthFubuMVC/fubucore">FubuCore</a> model binding used for form posts inside of FubuMVC.</li>
+<li>It's not shown here - and very rarely used now - but it is possible to make the settings provider work with different data sources than
+the <code>appSettings</code> in .Net configuration.</li>
+<li>Your Settings class needs to have a no argument, public constructor function to be resolved from the model binding</li>
+</ul>
+<div class="alert alert-info">
+Do note that the appSettings information, if any exists, will be applied to the Settings object when it is first created. That holds true for both
+Settings objects configured inside of a FubuRegistry, used by FubuMVC itself, or if they are lazily built by StructureMap at runtime.
+</div>
+<div class="alert alert-warning">
+But what if I want to have two different Settings classes with the same name but in different namespaces? Yeah, just don't do that.
+</div>
+<h2>Settings Precedence</h2>
+<p>In order of decreasing precedence, properties in a Settings object are determined by:</p>
+<ol>
+<li><code>AlterSettings()</code> calls in your <code>FubuRegistry</code> class for the application</li>
+<li><code>AlterSettings()</code> calls in <code>IFubuRegistryExtension</code> classes for loaded extension assemblies</li>
+<li>Information read from <code>appSettings</code> in your system's config file</li>
+<li>Default values from the Settings classes themselves -- and this gets a lot cleaner with C# 6</li>
+</ol>
+<p>See also <a href="/documentation/basics/modularity">Modularity and Extensibility</a> for information.</p>
+<h2>Altering Settings in FubuRegistry</h2>
+<p>You can programmatically alter Settings objects in code as part of bootstrapping with code like this:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class MyApp : FubuRegistry&#xD;&#xA;{&#xD;&#xA;    public MyApp()&#xD;&#xA;    {&#xD;&#xA;        AlterSettings&lt;MyAppSettings&gt;(_ =&gt;&#xD;&#xA;        {&#xD;&#xA;            // Override whatever the default value&#xD;&#xA;            // and any possible app.config values&#xD;&#xA;            // for this property&#xD;&#xA;            _.PauseOnFailuresInMilliseconds = 5000;&#xD;&#xA;        });&#xD;&#xA;&#xD;&#xA;        // Or&#xD;&#xA;        ReplaceSettings(new MyAppSettings&#xD;&#xA;        {&#xD;&#xA;            PauseOnFailuresInMilliseconds = 1000&#xD;&#xA;        });&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>In some cases, you will need to use this mechanism for altering built in Settings classes.</p>
+<h2>Plans for Jasper</h2>
+<p>This general strategy has been very successful (in my humble opinion) and will most certainly continue
+on to Jasper, but will be built upon the <a href="https://docs.asp.net/en/latest/fundamentals/configuration.html">newer configuration model in ASP.Net Core</a>
+instead of the creaky old <code>System.Configuration</code> namespace. The replacement will possibly be an extension
+library for <a href="http://structuremap.github.io">StructureMap</a> that <em>should</em> be perfectly usable outside of Jasper too.</p>
+<p>We will probably support the <code>IOptions&lt;T&gt;</code> model from ASP.Net Core for compatibility, but Jeremy thinks that that approach is &quot;meh.&quot;</p>
+
+			      	</div>
+
+			      	<hr />
+
+			      	<nav>
+				        <span>
+				        	<strong>Previous: </strong><a href="/documentation/basics/bootstrapping">Bootstrapping FubuMVC Applications</a>
+
+				        </span>
+				        <span class="pull-right">
+
+				        	<strong>Next: </strong><a href="/documentation/basics/behaviors">Understanding the Behavior Model</a>
+
+				        </span>
+			      	</nav>
+
+		      </div><!--/right-->
+		  	</div><!--/row-->
+		</div><!--/container-->
+
+
+    </body>
+
+
+    <foot>
+        <script type='text/javascript' src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script type='text/javascript' src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript" src="/content/embed.js"></script>
+        <script type="text/javascript" src="/content/prism.js"></script>
+        <script type="text/javascript" src="/content/sidebar.js"></script>
+        <script type="text/javascript" src="/content/affix.js"></script>
+
+<script>
+$('#search').keyup(function(e){
+  if(e.keyCode == 13) {
+    var search = $('#search').val();
+
+    var url = 'https://www.google.com/#q=site:darthfubumvc.github.io ' + search;
+    url = encodeURI(url);
+
+    //alert(url);
+
+    window.location.href = url;
+
+    e.stopPropagation();
+    if (e.cancelBubble!=null) e.cancelBubble = true;
+    return false;
+  }
+
+
+
+}); 
+
+</script>
+    </foot>
+</html>
+

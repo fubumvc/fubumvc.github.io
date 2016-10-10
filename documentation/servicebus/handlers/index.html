@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
+        <meta charset="utf-8">
+        <meta name="generator" content="Bootply" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>FubuMVC - Message Handlers</title>
+		<link href="/content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+		<link href="/content/prism.css" rel="stylesheet" type="text/css" />
+		<link href="/content/theme.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+        
+
+        <link rel="apple-touch-icon" href="/bootstrap/img/apple-touch-icon.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="/bootstrap/img/apple-touch-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="/bootstrap/img/apple-touch-icon-114x114.png">
+
+
+        <!-- CSS code from Bootply.com editor -->
+        <link href="/content/affix.css" rel="stylesheet" type="text/css" />
+    </head>
+    
+    <!-- HTML code from Bootply.com editor -->
+    
+    <body  >
+
+<a href="https://github.com/darthfubumvc/fubumvc"><img style="z-index: 5000; position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+        
+        <nav class="navbar navbar-default navbar-fixed-top" role="banner">
+		  <div class="container">
+		    <div class="navbar-header">
+		      <a href="/" class="navbar-brand">FubuMVC 3.0</a>
+		    </div>
+		    <nav class="collapse navbar-collapse" role="navigation">
+		      <ul class="nav navbar-nav pull-right">
+            <li>
+              <a href="/getting_started">Getting Started</a>
+            </li>
+		        <li>
+		          <a href="/documentation">Documentation</a>
+		        </li>
+		        <li>
+<a href="https://gitter.im/darthfubumvc/fubumvc?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://camo.githubusercontent.com/da2edb525cde1455a622c58c0effc3a90b9a181c/68747470733a2f2f6261646765732e6769747465722e696d2f4a6f696e253230436861742e737667" alt="Join the chat at https://gitter.im/darthfubumvc/fubumvc" data-canonical-src="https://badges.gitter.im/Join%20Chat.svg" style="max-width:100%;"></a>
+		        </li>
+		      	<li><a href="/documentation/servicebus/channels" title="Channels and Transports">Previous</a></li>
+		      	<li><a href="/documentation/servicebus/sending" title="Publishing Messages">Next</a></li>
+		      </ul>
+      <div class="navbar-form navbar-left" role="search">
+        <div class="form-group">
+          <input id="search" type="search" class="form-control" placeholder="Search">
+        </div>
+      </div>
+
+		    </nav>
+
+		  </div>
+		</nav>
+
+		  <div class="container">
+		  	<nav class="navbar-inverse">
+		  		<ol class="breadcrumb"><li><a href="/">FubuMVC</a></li><li><a href="/documentation">Documentation</a></li><li><a href="/documentation/servicebus">Service Bus Applications</a></li><li class="active">Message Handlers</li></ol>
+		  	</nav>
+		  </div>
+
+		<!--main-->
+		<div class="container">
+			<div class="row">
+		      <!--left-->
+			    
+		      <div class="col-md-3" id="leftCol">
+				<ul class="nav nav-stacked affix" id="sidebar">
+
+		        </ul>
+
+		        	<h3 class="no-margin">Next</h3><p><a href="/documentation/servicebus/sending">Publishing Messages</a></p>
+		        	<h3 class="no-margin">Previous</h3><a href="/documentation/servicebus/channels">Channels and Transports</a></p>
+
+		        </ul>
+		      </div><!--/left-->
+		      
+		      <!--right-->
+		      <div class="col-md-9">
+			      	<h1>Message Handlers <a href="https://github.com/darthfubumvc/fubumvc/blob/master/documentation/documentation/servicebus/handlers.md"  class="text-muted small pull-right fa fa-github" style="margin-top: 10px"> Edit on GitHub</a></h1>
+			      
+			      	<hr />
+
+			      	<div id="main-pane">
+			      		<!--Title:Message Handlers-->
+<!--Url:handlers-->
+<div class="alert alert-info">It is perfectly valid usage to use more than one handler method for any message type. While the 
+FubuMVC team doesn't necessarily recommend this in most cases, it may be useful for reusing some generic logic or creating
+extensibility mechanisms in your application.</div>
+<p>Sending messages back and forth is all fine and good, but one way or another, <em>something</em> has to actually handle and process
+those messages. Inside of FubuMVC, message handling is done with <em>handler actions</em>. Handler actions are nothing more than
+a public method on a public type that has a single input parameter for the message type that it processes:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class SimpleHandler&#xD;&#xA;{&#xD;&#xA;    public void Handle(PingMessage message)&#xD;&#xA;    {&#xD;&#xA;        Console.WriteLine(&quot;I got a ping!&quot;);&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>Note that there is absolutely no mandatory FubuMVC-specific interfaces or attributes or base types. One of FubuMVC's primary design
+objectives from the beginning was to eliminate direct coupling from your application code to FubuMVC itself. FubuMVC has also
+strived to reduce the amount of mandatory cruft in your application code like attributes, fluent interfaces, marker interfaces, and mandatory base classes that are
+so prevalent in many other frameworks in the .Net space.</p>
+<div class="alert alert-info">Jasper will support <i>method injection</i> to allow you to take in additional service dependencies
+in addition to the message body itself in the handler methods to potentially simplify your application code.</div>
+<p>See also <a href="/documentation/servicebus/cascading">Cascading Messages</a> for other valid handler method signatures.</p>
+<h2>Asynchronous Handlers</h2>
+<div class="alert alert-warning">FubuMVC 3.0's async support is charitably described as "imperfect." FubuMVC 4.0 will be rolled out soon
+with a truly "async all the way down" runtime model as a stopgap solution before "Jasper."</div>
+<p>If you're trying to be more efficient at runtime by taking advantage of asynchronous processing, you can make the signature
+of your handler action methods return a <code>Task</code> or <code>Task&lt;T&gt;</code> if you're exposing a <a href="/documentation/servicebus/cascading">cascading message</a>.</p>
+<p>A sample, async handler method is shown below:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public interface IPongWriter&#xD;&#xA;{&#xD;&#xA;    Task WritePong(PongMessage message);&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;public class AsyncHandler&#xD;&#xA;{&#xD;&#xA;    private readonly IPongWriter _writer;&#xD;&#xA;&#xD;&#xA;    public AsyncHandler(IPongWriter writer)&#xD;&#xA;    {&#xD;&#xA;        _writer = writer;&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    public Task Handle(PongMessage message)&#xD;&#xA;    {&#xD;&#xA;        return _writer.WritePong(message);&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<h2>Handler Dependencies</h2>
+<p>At runtime, the handler objects are created by the underlying <a href="http://structuremap.github.io">StructureMap</a> container for your application,
+meaning that you can inject service dependencies into your handler objects:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public interface IMyService&#xD;&#xA;{&#xD;&#xA;&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;public class ServiceUsingHandler&#xD;&#xA;{&#xD;&#xA;    private readonly IMyService _service;&#xD;&#xA;&#xD;&#xA;    // Using constructor injection to get dependencies&#xD;&#xA;    public ServiceUsingHandler(IMyService service)&#xD;&#xA;    {&#xD;&#xA;        _service = service;&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    public void Consume(PingMessage message)&#xD;&#xA;    {&#xD;&#xA;        // do stuff using IMyService with the PingMessage&#xD;&#xA;        // input&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>The handler objects are built by a <a href="http://structuremap.github.io/the-container/nested-containers/">nested container</a> scoped to the current message.</p>
+<p>See <a href="/documentation/basics/structuremap">Integration with StructureMap for IoC</a> for more information.</p>
+<h2>How FubuMVC Finds Handlers</h2>
+<p>FubuMVC uses <a href="http://structuremap.github.io/registration/auto-registration-and-conventions/">StructureMap 4.0's type scanning support</a> to find
+handler classes and candidate methods from known assemblies based on naming conventions.</p>
+<p>By default, FubuMVC is looking for public classes in the main application assembly with names matching these rules:</p>
+<ul>
+<li>Type name ends with &quot;Handler&quot;</li>
+<li>Type name ends with &quot;Consumer&quot;</li>
+<li>Type closes the open generic type <code>IStatefulSaga&lt;T&gt;</code> for classes implementing <a href="/documentation/servicebus/sagas">sagas</a></li>
+</ul>
+<p>From the types, FubuMVC looks for any public instance method that accepts a single parameter that is assumed to be the message type.</p>
+<h2>Customize Handler Discovery</h2>
+<div class="alert alert-warning">Do note that handler finding conventions are additive, meaning that adding additional handler sources doesn
+not automatically disable the built in handler source. This is different than the action discovery in the HTTP side of FubuMVC.</div>
+<p>The easiest way to use the FubuMVC service bus functionality is to just code against the default conventions. However, if you wish to deviate
+from those naming conventions you can either supplement the handler discovery or replace it completely with your own conventions.</p>
+<p>At a minimum, you can disable the built in discovery, add a new handler source through the <code>FindBy()</code> methods, or register specific
+handler classes with the code below:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class CustomHandlerApp : FubuTransportRegistry&lt;AppSettings&gt;&#xD;&#xA;{&#xD;&#xA;    public CustomHandlerApp()&#xD;&#xA;    {&#xD;&#xA;        // Turn off the default handler conventions&#xD;&#xA;        // altogether&#xD;&#xA;        Handlers.DisableDefaultHandlerSource();&#xD;&#xA;&#xD;&#xA;        // Custom handler finding through common options&#xD;&#xA;        Handlers.FindBy(source =&gt;&#xD;&#xA;        {&#xD;&#xA;            source.UseThisAssembly();&#xD;&#xA;            source.IncludeClassesSuffixedWithHandler();&#xD;&#xA;        });&#xD;&#xA;&#xD;&#xA;        // Include candidate methods from a specific class or&#xD;&#xA;        // classes&#xD;&#xA;        Handlers.Include(typeof(SimpleHandler), typeof(AsyncHandler));&#xD;&#xA;&#xD;&#xA;        // Include a specific handler class with a generic argument&#xD;&#xA;        Handlers.Include&lt;SimpleHandler&gt;();&#xD;&#xA;&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>If you want to build your own custom handler source, the easiest thing to do is to subclass the <code>HandlerSource</code> class from
+FubuMVC and configure it in its constructor function like so:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class MyHandlerSource : HandlerSource&#xD;&#xA;{&#xD;&#xA;    public MyHandlerSource()&#xD;&#xA;    {&#xD;&#xA;        // Search through other assemblies&#xD;&#xA;        UseAssembly(typeof(PingMessage).GetTypeInfo().Assembly);&#xD;&#xA;&#xD;&#xA;        // And the application assembly&#xD;&#xA;        UseThisAssembly();&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;        // Use a custom filter to determine handler types&#xD;&#xA;        IncludeTypes(type =&gt; type.Closes(typeof(IHandler&lt;&gt;)));&#xD;&#xA;&#xD;&#xA;        // Or look for types with a known suffix&#xD;&#xA;        IncludeClassesSuffixedWith(&quot;Handler&quot;);&#xD;&#xA;&#xD;&#xA;        // Or use some built in filters&#xD;&#xA;        IncludeClassesSuffixedWithConsumer();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>If you want to go off the beaten path and do some kind of special handler discovery, you can directly implement
+the <code>IHandlerSource</code> interface in your own code.</p>
+<p>Let's say that you're converting an application to FubuMVC that previously used a service bus that exposed message handling through
+an interface like <code>IHandler</code> shown below:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public interface IHandler&lt;T&gt;&#xD;&#xA;{&#xD;&#xA;    void Handle(T message);&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p><em>An</em> implementation of a custom action source that can discover <code>IHandler&lt;T&gt;</code> classes and methods may look like the following:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class MyCustomHandlerSource : IHandlerSource&#xD;&#xA;{&#xD;&#xA;    public async Task&lt;HandlerCall[]&gt; FindCalls(Assembly applicationAssembly)&#xD;&#xA;    {&#xD;&#xA;        var types = await TypeRepository&#xD;&#xA;            .FindTypes(applicationAssembly, TypeClassification.Concretes | TypeClassification.Closed);&#xD;&#xA;&#xD;&#xA;        var candidates = types.Where(x =&gt; x.Closes(typeof(IHandler&lt;&gt;)));&#xD;&#xA;&#xD;&#xA;        return candidates&#xD;&#xA;            .SelectMany(findCallsPerType)&#xD;&#xA;            .ToArray();&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    private static IEnumerable&lt;HandlerCall&gt; findCallsPerType(Type type)&#xD;&#xA;    {&#xD;&#xA;        return type&#xD;&#xA;            .GetMethods()&#xD;&#xA;            .Where(m =&gt; m.Name == nameof(IHandler&lt;object&gt;.Handle))&#xD;&#xA;            .Select(m =&gt; new HandlerCall(type, m));&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>Finally, you can direct FubuMVC to use your custom handler sources with code like this inside of your <code>FubuTransportRegistry</code>
+class representing your application:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class AppWithCustomHandlerSources : FubuTransportRegistry&lt;AppSettings&gt;&#xD;&#xA;{&#xD;&#xA;    public AppWithCustomHandlerSources()&#xD;&#xA;    {&#xD;&#xA;        // Add a source by type&#xD;&#xA;        Handlers.FindBy&lt;MyHandlerSource&gt;();&#xD;&#xA;&#xD;&#xA;        // Add a source object directly&#xD;&#xA;        Handlers.FindBy(new MyCustomHandlerSource());&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<h2>Subclass or Interface Handlers</h2>
+<p>FubuMVC will allow you to use handler methods that work against interfaces or abstract types to apply or reuse
+generic functionality across messages. Let's say that some subset of your messages implement some kind of
+<code>IMessage</code> interface like this one and an implentation of it below:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public interface IMessage { }&#xD;&#xA;&#xD;&#xA;public class MessageOne : IMessage { }&#xD;&#xA;</code></pre>
+<p>You can handle the <code>MessageOne</code> specifically with a handler action like this:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class SpecificMessageHandler&#xD;&#xA;{&#xD;&#xA;    public void Consume(MessageOne message)&#xD;&#xA;    {&#xD;&#xA;&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>You can also create a handler for <code>IMessage</code> like this one:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class GenericMessageHandler&#xD;&#xA;{&#xD;&#xA;    private readonly Envelope _envelope;&#xD;&#xA;&#xD;&#xA;    public GenericMessageHandler(Envelope envelope)&#xD;&#xA;    {&#xD;&#xA;        _envelope = envelope;&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    public void Consume(IMessage message)&#xD;&#xA;    {&#xD;&#xA;        Console.WriteLine($&quot;Got a message from {_envelope.Source}&quot;);&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>When FubuMVC handles the <code>MessageOne</code> message, it first calls all the specific handlers for that message type,
+then will call any handlers that handle a more generic message type (interface or abstract class most likely) where
+the specific type can be cast to the generic type. You can clearly see this behavior by examining the <a href="/documentation/basics/diagnostics">handler chain diagnostics</a>.</p>
+
+			      	</div>
+
+			      	<hr />
+
+			      	<nav>
+				        <span>
+				        	<strong>Previous: </strong><a href="/documentation/servicebus/channels">Channels and Transports</a>
+
+				        </span>
+				        <span class="pull-right">
+
+				        	<strong>Next: </strong><a href="/documentation/servicebus/sending">Publishing Messages</a>
+
+				        </span>
+			      	</nav>
+
+		      </div><!--/right-->
+		  	</div><!--/row-->
+		</div><!--/container-->
+
+
+    </body>
+
+
+    <foot>
+        <script type='text/javascript' src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script type='text/javascript' src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript" src="/content/embed.js"></script>
+        <script type="text/javascript" src="/content/prism.js"></script>
+        <script type="text/javascript" src="/content/sidebar.js"></script>
+        <script type="text/javascript" src="/content/affix.js"></script>
+
+<script>
+$('#search').keyup(function(e){
+  if(e.keyCode == 13) {
+    var search = $('#search').val();
+
+    var url = 'https://www.google.com/#q=site:darthfubumvc.github.io ' + search;
+    url = encodeURI(url);
+
+    //alert(url);
+
+    window.location.href = url;
+
+    e.stopPropagation();
+    if (e.cancelBubble!=null) e.cancelBubble = true;
+    return false;
+  }
+
+
+
+}); 
+
+</script>
+    </foot>
+</html>
+

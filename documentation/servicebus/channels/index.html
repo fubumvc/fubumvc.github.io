@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
+        <meta charset="utf-8">
+        <meta name="generator" content="Bootply" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>FubuMVC - Channels and Transports</title>
+		<link href="/content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+		<link href="/content/prism.css" rel="stylesheet" type="text/css" />
+		<link href="/content/theme.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+        
+
+        <link rel="apple-touch-icon" href="/bootstrap/img/apple-touch-icon.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="/bootstrap/img/apple-touch-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="/bootstrap/img/apple-touch-icon-114x114.png">
+
+
+        <!-- CSS code from Bootply.com editor -->
+        <link href="/content/affix.css" rel="stylesheet" type="text/css" />
+    </head>
+    
+    <!-- HTML code from Bootply.com editor -->
+    
+    <body  >
+
+<a href="https://github.com/darthfubumvc/fubumvc"><img style="z-index: 5000; position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+        
+        <nav class="navbar navbar-default navbar-fixed-top" role="banner">
+		  <div class="container">
+		    <div class="navbar-header">
+		      <a href="/" class="navbar-brand">FubuMVC 3.0</a>
+		    </div>
+		    <nav class="collapse navbar-collapse" role="navigation">
+		      <ul class="nav navbar-nav pull-right">
+            <li>
+              <a href="/getting_started">Getting Started</a>
+            </li>
+		        <li>
+		          <a href="/documentation">Documentation</a>
+		        </li>
+		        <li>
+<a href="https://gitter.im/darthfubumvc/fubumvc?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://camo.githubusercontent.com/da2edb525cde1455a622c58c0effc3a90b9a181c/68747470733a2f2f6261646765732e6769747465722e696d2f4a6f696e253230436861742e737667" alt="Join the chat at https://gitter.im/darthfubumvc/fubumvc" data-canonical-src="https://badges.gitter.im/Join%20Chat.svg" style="max-width:100%;"></a>
+		        </li>
+		      	<li><a href="/documentation/servicebus" title="Service Bus Applications">Previous</a></li>
+		      	<li><a href="/documentation/servicebus/handlers" title="Message Handlers">Next</a></li>
+		      </ul>
+      <div class="navbar-form navbar-left" role="search">
+        <div class="form-group">
+          <input id="search" type="search" class="form-control" placeholder="Search">
+        </div>
+      </div>
+
+		    </nav>
+
+		  </div>
+		</nav>
+
+		  <div class="container">
+		  	<nav class="navbar-inverse">
+		  		<ol class="breadcrumb"><li><a href="/">FubuMVC</a></li><li><a href="/documentation">Documentation</a></li><li><a href="/documentation/servicebus">Service Bus Applications</a></li><li class="active">Channels and Transports</li></ol>
+		  	</nav>
+		  </div>
+
+		<!--main-->
+		<div class="container">
+			<div class="row">
+		      <!--left-->
+			    
+		      <div class="col-md-3" id="leftCol">
+				<ul class="nav nav-stacked affix" id="sidebar">
+
+		        </ul>
+
+		        	<h3 class="no-margin">Next</h3><p><a href="/documentation/servicebus/handlers">Message Handlers</a></p>
+		        	<h3 class="no-margin">Previous</h3><a href="/documentation/servicebus">Service Bus Applications</a></p>
+
+		        </ul>
+		      </div><!--/left-->
+		      
+		      <!--right-->
+		      <div class="col-md-9">
+			      	<h1>Channels and Transports <a href="https://github.com/darthfubumvc/fubumvc/blob/master/documentation/documentation/servicebus/channels.md"  class="text-muted small pull-right fa fa-github" style="margin-top: 10px"> Edit on GitHub</a></h1>
+			      
+			      	<hr />
+
+			      	<div id="main-pane">
+			      		<!--Title:Channels and Transports-->
+<!--Url:channels-->
+<p>The actual connectors in a FubuMVC service bus application are <em>channel's</em> that are backed and created
+by <em>transport's</em>. Today, FubuMVC only supports a transport based on the <a href="/documentation/servicebus/lq">Lightning Queues</a> project
+and an in memory transport for testing.</p>
+<h2>Installing Transport's</h2>
+<p>The only thing you need to do to add a transport type to FubuMVC is the presence of the assembly for the transport adapter.
+In the case of the LightningQueues transport, you only need to install the FubuMVC.LightningQueues library via Nuget:</p>
+<pre>
+Install-Package FubuMVC.LightningQueues
+</pre>
+<h2>Configuring Channels</h2>
+<div class="alert alert-info">
+A key goal of the FubuMVC successor ("Jasper") is to simplify and streamline the service bus bootstrapping shown in this
+section.
+</div>
+<p>Channels require a little more work. First off, channels are identified and configured by a Uri matching the
+desired transport, port, and queue name.</p>
+<p>From the <a href="/getting_started">Hello World</a> example, we first need to build a <a href="/documentation/basics/settings">&quot;Settings&quot; object</a> for two channels
+identified as <code>Pinger</code> and <code>Ponger</code>:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class HelloWorldSettings&#xD;&#xA;{&#xD;&#xA;    public Uri Pinger { get; set; } = &#xD;&#xA;        &quot;lq.tcp://localhost:2352/pinger&quot;.ToUri();&#xD;&#xA;&#xD;&#xA;    public Uri Ponger { get; set; } =&#xD;&#xA;        &quot;lq.tcp://localhost:2353/ponger&quot;.ToUri();&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>All the <code>HelloWorldSettings</code> class is is a way to identify channels and act as a means to communicate the channel Uri's to
+the service bus model. I'm hard coding the Uri's in the code above, but that information can be pulled from any kind of configuration using
+the built in support for <a href="/documentation/basics/settings">strong typed configuration</a> in FubuMVC.</p>
+<p>To configure service bus channels, it's easiest to define your application with a <code>FubuTransportRegistry&lt;T&gt;</code> class where the &quot;T&quot;
+is your settings class. Inside of your registry class, you need to use the fluent interface that hangs off of the <code>Channel()</code> method
+to describe channels and their behavior. A pair of examples of this is shown below:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class PingApp : FubuTransportRegistry&lt;HelloWorldSettings&gt;&#xD;&#xA;{&#xD;&#xA;    public PingApp()&#xD;&#xA;    {&#xD;&#xA;        // Configuring PingApp to send PingMessage&#x27;s&#xD;&#xA;        // to the PongApp&#xD;&#xA;        Channel(x =&gt; x.Ponger)&#xD;&#xA;            .AcceptsMessage&lt;PingMessage&gt;();&#xD;&#xA;&#xD;&#xA;        // Listen for incoming messages from &quot;Pinger&quot;&#xD;&#xA;        Channel(x =&gt; x.Pinger)&#xD;&#xA;            .ReadIncoming();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;public class PongApp : FubuTransportRegistry&lt;HelloWorldSettings&gt;&#xD;&#xA;{&#xD;&#xA;    // Listen for incoming messages from &quot;Ponger&quot;&#xD;&#xA;    public PongApp()&#xD;&#xA;    {&#xD;&#xA;        Channel(x =&gt; x.Ponger)&#xD;&#xA;            .ReadIncoming();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>The <code>FubuTransportRegistry</code> is a subclass of the <a href="/documentation/basics/bootstrapping">FubuRegistry</a> class that adds additional options
+germaine to the service bus feature.</p>
+<h2>Listening to Messages from a Channel</h2>
+<p>While you can always send messages to any configured channel, you must explicitly mark which
+channels should be monitored for incoming messages to the current node. That's done with the
+<code>ReadIncoming()</code> method shown below:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class ListeningApp : FubuTransportRegistry&lt;HelloWorldSettings&gt;&#xD;&#xA;{&#xD;&#xA;    public ListeningApp()&#xD;&#xA;    {&#xD;&#xA;        // This directs&#xD;&#xA;        Channel(x =&gt; x.Pinger).ReadIncoming();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<h2>Static Message Routing Rules</h2>
+<p>When you publish a message using <code>IServiceBus</code> without explicitly setting the Uri of the desired
+destination, FubuMVC has to invoke the known message routing rules and dynamic subscriptions to
+figure out which locations should receive the message. Consider this code that publishes a
+<code>PingMessage</code>:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class SendingExample&#xD;&#xA;{&#xD;&#xA;    public async Task SendPingsAndPongs(IServiceBus bus)&#xD;&#xA;    {&#xD;&#xA;        // Publish a message&#xD;&#xA;        bus.Send(new PingMessage());&#xD;&#xA;&#xD;&#xA;        // Request/Reply&#xD;&#xA;        var pong = await bus.Request&lt;PongMessage&gt;(new PingMessage());&#xD;&#xA;&#xD;&#xA;        // &quot;Delay&quot; Send&#xD;&#xA;        bus.DelaySend(new PingMessage(), TimeSpan.FromDays(1));&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>To route <code>PingMessage</code> to a channel, we can apply static message routing rules directly on to a
+channel by using one of the <em>Accepts****</em> methods as shown below:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class StaticRoutingApp : FubuTransportRegistry&lt;AppSettings&gt;&#xD;&#xA;{&#xD;&#xA;    public StaticRoutingApp()&#xD;&#xA;    {&#xD;&#xA;        Channel(x =&gt; x.Transactions)&#xD;&#xA;&#xD;&#xA;            // Explicitly add a single message type&#xD;&#xA;            .AcceptsMessage&lt;PingMessage&gt;()&#xD;&#xA;&#xD;&#xA;            // Explicitly add a single message type&#xD;&#xA;            .AcceptsMessage(typeof(PongMessage))&#xD;&#xA;&#xD;&#xA;            // Publish any types matching the supplied filter&#xD;&#xA;            // to this channel&#xD;&#xA;            .AcceptsMessages(type =&gt; type.Name.EndsWith(&quot;Message&quot;))&#xD;&#xA;&#xD;&#xA;            // Publish any message type contained in the assembly&#xD;&#xA;            // to this channel, by supplying a type contained&#xD;&#xA;            // within that assembly&#xD;&#xA;            .AcceptsMessagesInAssemblyContainingType&lt;PingMessage&gt;()&#xD;&#xA;&#xD;&#xA;            // Publish any message type contained in the named&#xD;&#xA;            // assembly to this channel&#xD;&#xA;            .AcceptsMessagesInAssembly(&quot;MyMessageLibrary&quot;)&#xD;&#xA;&#xD;&#xA;            // Publish any message type contained in the&#xD;&#xA;            // namespace given to this channel&#xD;&#xA;            .AcceptsMessagesInNamespace(&quot;MyMessageLibrary&quot;)&#xD;&#xA;&#xD;&#xA;            // Publish any message type contained in the namespace&#xD;&#xA;            // of the type to this channel&#xD;&#xA;            .AcceptsMessagesInNamespaceContainingType&lt;PingMessage&gt;();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>Do note that doing the message type filtering by namespace will also include child namespaces. In
+our own usage we try to rely on either namespace rules or by using shared message assemblies.</p>
+<p>See also the <a href="/documentation/servicebus/subscriptions">Dynamic Subscriptions</a></p>
+<h2>Message Persistence</h2>
+<p>If the transport you're using supports this switch (the LightningQueues transport does), you can declare channels to publish messages
+with either a delivery guaranteed, persistent strategy or by a non-persistent strategy. The non-guaranteed
+delivery mode is significantly faster, but probably only suitable for message types where throughput
+is more important than message reliability.</p>
+<p>Below is a sample of explicitly controlling the channel persistence:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class AppSettings&#xD;&#xA;{&#xD;&#xA;    // This channel handles &quot;fire and forget&quot;&#xD;&#xA;    // control messages&#xD;&#xA;    public Uri Control { get; set; }&#xD;&#xA;        = new Uri(&quot;lq.tcp://localhost:2345/control&quot;);&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;    // This channel handles normal business&#xD;&#xA;    // processing messages&#xD;&#xA;    public Uri Transactions { get; set; }&#xD;&#xA;        = new Uri(&quot;lq.tcp://localhost:2346/transactions&quot;);&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;public class BigApp : FubuTransportRegistry&lt;AppSettings&gt;&#xD;&#xA;{&#xD;&#xA;    public BigApp()&#xD;&#xA;    {&#xD;&#xA;        // Declare that the &quot;Control&quot; channel&#xD;&#xA;        // use the faster, but unsafe transport mechanism&#xD;&#xA;        Channel(x =&gt; x.Control)&#xD;&#xA;            .DeliveryFastWithoutGuarantee()&#xD;&#xA;            .UseAsControlChannel();&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;        Channel(x =&gt; x.Transactions)&#xD;&#xA;            // This is the default, but you can&#xD;&#xA;            // still configure it explicitly&#xD;&#xA;            .DeliveryGuaranteed();&#xD;&#xA;&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<h2>Control Queues</h2>
+<p>FubuMVC may need to send messages between running service bus nodes to coordinate activities, register for dynamic subscriptions,
+or perform health checks. Some of these messages are time sensitive, so it will frequently be valuable to set up a separate
+&quot;control&quot; channel for these messages so they aren't stuck in a backed up queue with your normal messages.</p>
+<p>Also, the control messages fit the &quot;fire and forget&quot; messaging model, so we recommend using the non-persistent channel mode with these
+channels.</p>
+<p>Below is a sample of setting up a control channel:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class ControlChannelApp : FubuTransportRegistry&lt;AppSettings&gt;&#xD;&#xA;{&#xD;&#xA;    public ControlChannelApp()&#xD;&#xA;    {&#xD;&#xA;        Channel(x =&gt; x.Control)&#xD;&#xA;            .UseAsControlChannel()&#xD;&#xA;            .DeliveryFastWithoutGuarantee();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+
+			      	</div>
+
+			      	<hr />
+
+			      	<nav>
+				        <span>
+				        	<strong>Previous: </strong><a href="/documentation/servicebus">Service Bus Applications</a>
+
+				        </span>
+				        <span class="pull-right">
+
+				        	<strong>Next: </strong><a href="/documentation/servicebus/handlers">Message Handlers</a>
+
+				        </span>
+			      	</nav>
+
+		      </div><!--/right-->
+		  	</div><!--/row-->
+		</div><!--/container-->
+
+
+    </body>
+
+
+    <foot>
+        <script type='text/javascript' src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script type='text/javascript' src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript" src="/content/embed.js"></script>
+        <script type="text/javascript" src="/content/prism.js"></script>
+        <script type="text/javascript" src="/content/sidebar.js"></script>
+        <script type="text/javascript" src="/content/affix.js"></script>
+
+<script>
+$('#search').keyup(function(e){
+  if(e.keyCode == 13) {
+    var search = $('#search').val();
+
+    var url = 'https://www.google.com/#q=site:darthfubumvc.github.io ' + search;
+    url = encodeURI(url);
+
+    //alert(url);
+
+    window.location.href = url;
+
+    e.stopPropagation();
+    if (e.cancelBubble!=null) e.cancelBubble = true;
+    return false;
+  }
+
+
+
+}); 
+
+</script>
+    </foot>
+</html>
+

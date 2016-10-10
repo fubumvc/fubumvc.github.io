@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
+        <meta charset="utf-8">
+        <meta name="generator" content="Bootply" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>FubuMVC - Getting Started</title>
+		<link href="/content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+		<link href="/content/prism.css" rel="stylesheet" type="text/css" />
+		<link href="/content/theme.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+        
+
+        <link rel="apple-touch-icon" href="/bootstrap/img/apple-touch-icon.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="/bootstrap/img/apple-touch-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="/bootstrap/img/apple-touch-icon-114x114.png">
+
+
+        <!-- CSS code from Bootply.com editor -->
+        <link href="/content/affix.css" rel="stylesheet" type="text/css" />
+    </head>
+    
+    <!-- HTML code from Bootply.com editor -->
+    
+    <body  >
+
+<a href="https://github.com/darthfubumvc/fubumvc"><img style="z-index: 5000; position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+        
+        <nav class="navbar navbar-default navbar-fixed-top" role="banner">
+		  <div class="container">
+		    <div class="navbar-header">
+		      <a href="/" class="navbar-brand">FubuMVC 3.0</a>
+		    </div>
+		    <nav class="collapse navbar-collapse" role="navigation">
+		      <ul class="nav navbar-nav pull-right">
+            <li>
+              <a href="/getting_started">Getting Started</a>
+            </li>
+		        <li>
+		          <a href="/documentation">Documentation</a>
+		        </li>
+		        <li>
+<a href="https://gitter.im/darthfubumvc/fubumvc?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://camo.githubusercontent.com/da2edb525cde1455a622c58c0effc3a90b9a181c/68747470733a2f2f6261646765732e6769747465722e696d2f4a6f696e253230436861742e737667" alt="Join the chat at https://gitter.im/darthfubumvc/fubumvc" data-canonical-src="https://badges.gitter.im/Join%20Chat.svg" style="max-width:100%;"></a>
+		        </li>
+		      	<li><a href="/" title="FubuMVC">Previous</a></li>
+		      	<li><a href="/documentation" title="Documentation">Next</a></li>
+		      </ul>
+      <div class="navbar-form navbar-left" role="search">
+        <div class="form-group">
+          <input id="search" type="search" class="form-control" placeholder="Search">
+        </div>
+      </div>
+
+		    </nav>
+
+		  </div>
+		</nav>
+
+		  <div class="container">
+		  	<nav class="navbar-inverse">
+		  		<ol class="breadcrumb"><li><a href="/">FubuMVC</a></li><li class="active">Getting Started</li></ol>
+		  	</nav>
+		  </div>
+
+		<!--main-->
+		<div class="container">
+			<div class="row">
+		      <!--left-->
+			    
+		      <div class="col-md-3" id="leftCol">
+				<ul class="nav nav-stacked affix" id="sidebar">
+
+		        </ul>
+
+		        	<h3 class="no-margin">Next</h3><p><a href="/documentation">Documentation</a></p>
+		        	<h3 class="no-margin">Previous</h3><a href="/">FubuMVC</a></p>
+
+		        </ul>
+		      </div><!--/left-->
+		      
+		      <!--right-->
+		      <div class="col-md-9">
+			      	<h1>Getting Started <a href="https://github.com/darthfubumvc/fubumvc/blob/master/documentation/getting_started.md"  class="text-muted small pull-right fa fa-github" style="margin-top: 10px"> Edit on GitHub</a></h1>
+			      
+			      	<hr />
+
+			      	<div id="main-pane">
+			      		<!--Title:Getting Started-->
+<!--Url:getting_started-->
+<p>The first step is to install the FubuMVC.Core nuget. That should bring down dependencies on:</p>
+<ul>
+<li>FubuMVC.Core itself</li>
+<li>StructureMap 4.* (as of 3.0, FubuMVC eliminated its IoC abstractions and only runs on StructureMap)</li>
+<li>Newtonsoft.Json, so watch for binding conflict issues. Sigh.</li>
+<li>HtmlTags 2.1 -- FubuMVC is incompatible with newer versions of HtmlTags</li>
+<li>FubuCore</li>
+</ul>
+<h2>Web Applications</h2>
+<p>FubuMVC was originally a framework for building web applications, and that's still the easiest, default way to
+use FubuMVC. To get started with the classic hello world exercise, start a new class library and add this class
+below:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class HomeEndpoint&#xD;&#xA;{&#xD;&#xA;    public string Index()&#xD;&#xA;    {&#xD;&#xA;        return &quot;Hello, world!&quot;;&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>Based on the default conventions within FubuMVC, the <code>HomeEndpoint.Index()</code> method will be used to handle
+the root &quot;/&quot; url of your web application. The next step would be to bootstrap your new application using the
+<code>FubuRuntime</code> class:</p>
+<pre><code class="language-csharp">&#xD;&#xA;using (var runtime = FubuRuntime.Basic())&#xD;&#xA;{&#xD;&#xA;    &#xD;&#xA;} &#xD;&#xA;</code></pre>
+<p>In the code above, we're starting up a basic application with all the defaults for the current Assembly.
+The <code>FubuRuntime</code> is the key class that represents a running FubuMVC application.</p>
+<p>Now, to actually exercise this endpoint, we can use FubuMVC's &quot;Scenario&quot; support to write a unit test below:</p>
+<pre><code class="language-csharp">&#xD;&#xA;[Fact]&#xD;&#xA;public void start_and_run()&#xD;&#xA;{&#xD;&#xA;    // Bootstrap a basic FubuMVC applications&#xD;&#xA;    // with just the default policies and services&#xD;&#xA;    using (var runtime = FubuRuntime.Basic())&#xD;&#xA;    {&#xD;&#xA;        // Execute the home route and verify&#xD;&#xA;        // the response&#xD;&#xA;        runtime.Scenario(_ =&gt;&#xD;&#xA;        {&#xD;&#xA;            _.Get.Url(&quot;/&quot;);&#xD;&#xA;&#xD;&#xA;            _.StatusCodeShouldBeOk();&#xD;&#xA;            _.ContentShouldBe(&quot;Hello, World&quot;);&#xD;&#xA;        });&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>Finally, we can start up our hello world application with the <a href="https://github.com/Bobris/Nowin">NOWIN web server</a> in a self hosted
+console application like this:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public static class Program&#xD;&#xA;{&#xD;&#xA;    public static int Main(string[] args)&#xD;&#xA;    {&#xD;&#xA;        // Bootstrap the same basic application, but this time&#xD;&#xA;        // add NOWIN web server hosting&#xD;&#xA;        using (var runtime = FubuRuntime.Basic(_ =&gt; _.HostWith&lt;NOWIN&gt;()))&#xD;&#xA;        {&#xD;&#xA;            Console.WriteLine(&quot;Web application available at &quot; &#x2B; runtime.BaseAddress);&#xD;&#xA;        }&#xD;&#xA;&#xD;&#xA;        return 0;&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>Do note that you would need to install the NOWIN nuget separately.</p>
+<h2>ServiceBus Applications</h2>
+<p>FubuMVC was originally a framework for web applications and the service bus functionality was added originally in
+an add on called <a href="https://github.com/FubuMvcArchive/FubuTransportation">FubuTransportation</a> and later merged into
+FubuMVC 3.0. As such, the service bus takes a little more work to bootstrap.</p>
+<p>For &quot;hello, world&quot; with the ServiceBus, let's just do a &quot;ping pong&quot; exercise where one running node sends a &quot;Ping&quot; messages
+to another running node, which sends back a &quot;Pong&quot; message reply to the original node.</p>
+<p>First, let's create our two message types and the actual message handler classes that will process the message
+types:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class PingMessage&#xD;&#xA;{&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;public class PongMessage&#xD;&#xA;{&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;public class PongHandler&#xD;&#xA;{&#xD;&#xA;    public void Handle(PongMessage pong)&#xD;&#xA;    {&#xD;&#xA;        Console.WriteLine(&quot;Received pong message&quot;);&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;public class PingHandler&#xD;&#xA;{&#xD;&#xA;    // This is an example of using &quot;cascading messages&quot;&#xD;&#xA;    // The PongMessage returned by this method would&#xD;&#xA;    // be sent back to the original sender of the PingMessage&#xD;&#xA;    public PongMessage Handle(PingMessage ping)&#xD;&#xA;    {&#xD;&#xA;        Console.WriteLine(&quot;Received ping message&quot;);&#xD;&#xA;        return new PongMessage();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>So a couple things to note about the code above:</p>
+<ul>
+<li>The message types need to be serializable by whatever serializer that you're using within the service bus</li>
+<li><code>PingHandler</code> and <code>PongHandler</code> don't need to implement any kind of FubuMVC interface or base class</li>
+<li>FubuMVC will find the handler classes by its type scanning conventions</li>
+</ul>
+<p>Now that we've got messages and related handlers, we need to figure out how messages are going to get back an forth via &quot;channels&quot; backed
+by a &quot;transport&quot; mechanism. FubuMVC's main transport is based on <a href="">LightningQueues</a>https://github.com/LightningQueues/LightningQueues (LQ)
+and requires the extra FubuMVC.LightningQueues library from Nuget.</p>
+<p>The nice thing about the LightningQueues transport is that it doesn't require any installation. All we need to do
+to enable the LQ backed channels is to configure the queue name and port we want our application to use. Assuming that
+we'll have two channels we're going to name &quot;Pinger&quot; and &quot;Ponger,&quot; we'll build out a Settings class that will hold the addresses
+of our two channels:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class HelloWorldSettings&#xD;&#xA;{&#xD;&#xA;    public Uri Pinger { get; set; } = &#xD;&#xA;        &quot;lq.tcp://localhost:2352/pinger&quot;.ToUri();&#xD;&#xA;&#xD;&#xA;    public Uri Ponger { get; set; } =&#xD;&#xA;        &quot;lq.tcp://localhost:2353/ponger&quot;.ToUri();&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>After all that, we're finally ready to build out our two applications. The applications are expressed by
+a subclass of the <code>FubuTransportRegistry&lt;T&gt;</code> class, where &quot;T&quot; is the Settings type from above.</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class PingApp : FubuTransportRegistry&lt;HelloWorldSettings&gt;&#xD;&#xA;{&#xD;&#xA;    public PingApp()&#xD;&#xA;    {&#xD;&#xA;        // Configuring PingApp to send PingMessage&#x27;s&#xD;&#xA;        // to the PongApp&#xD;&#xA;        Channel(x =&gt; x.Ponger)&#xD;&#xA;            .AcceptsMessage&lt;PingMessage&gt;();&#xD;&#xA;&#xD;&#xA;        // Listen for incoming messages from &quot;Pinger&quot;&#xD;&#xA;        Channel(x =&gt; x.Pinger)&#xD;&#xA;            .ReadIncoming();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;public class PongApp : FubuTransportRegistry&lt;HelloWorldSettings&gt;&#xD;&#xA;{&#xD;&#xA;    // Listen for incoming messages from &quot;Ponger&quot;&#xD;&#xA;    public PongApp()&#xD;&#xA;    {&#xD;&#xA;        Channel(x =&gt; x.Ponger)&#xD;&#xA;            .ReadIncoming();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>Finally, we can spin up both the &quot;Ping&quot; and &quot;Pong&quot; applications and send messages from one to the other:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class HelloWorld&#xD;&#xA;{&#xD;&#xA;    [Fact]&#xD;&#xA;    public async Task send_and_receive()&#xD;&#xA;    {&#xD;&#xA;        // Spin up the two applications&#xD;&#xA;        var pinger = FubuRuntime.For&lt;PingApp&gt;();&#xD;&#xA;        var ponger = FubuRuntime.For&lt;PongApp&gt;();&#xD;&#xA;&#xD;&#xA;        var bus = pinger.Get&lt;IServiceBus&gt;();&#xD;&#xA;&#xD;&#xA;        // This sends a PingMessage and waits for a corresponding&#xD;&#xA;        // PongMessage reply&#xD;&#xA;        var pong = await bus.Request&lt;PongMessage&gt;(new PingMessage());&#xD;&#xA;&#xD;&#xA;        pong.ShouldNotBe(null);&#xD;&#xA;&#xD;&#xA;        pinger.Dispose();&#xD;&#xA;        ponger.Dispose();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+
+			      	</div>
+
+			      	<hr />
+
+			      	<nav>
+				        <span>
+				        	<strong>Previous: </strong><a href="/">FubuMVC</a>
+
+				        </span>
+				        <span class="pull-right">
+
+				        	<strong>Next: </strong><a href="/documentation">Documentation</a>
+
+				        </span>
+			      	</nav>
+
+		      </div><!--/right-->
+		  	</div><!--/row-->
+		</div><!--/container-->
+
+
+    </body>
+
+
+    <foot>
+        <script type='text/javascript' src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script type='text/javascript' src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript" src="/content/embed.js"></script>
+        <script type="text/javascript" src="/content/prism.js"></script>
+        <script type="text/javascript" src="/content/sidebar.js"></script>
+        <script type="text/javascript" src="/content/affix.js"></script>
+
+<script>
+$('#search').keyup(function(e){
+  if(e.keyCode == 13) {
+    var search = $('#search').val();
+
+    var url = 'https://www.google.com/#q=site:darthfubumvc.github.io ' + search;
+    url = encodeURI(url);
+
+    //alert(url);
+
+    window.location.href = url;
+
+    e.stopPropagation();
+    if (e.cancelBubble!=null) e.cancelBubble = true;
+    return false;
+  }
+
+
+
+}); 
+
+</script>
+    </foot>
+</html>
+
