@@ -5,7 +5,7 @@
         <meta charset="utf-8">
         <meta name="generator" content="Bootply" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-		<title>FubuMVC - Logging</title>
+		<title>FubuMVC - Conventions and Policies</title>
 		<link href="/content/bootstrap.min.css" rel="stylesheet" type="text/css" />
 		<link href="/content/prism.css" rel="stylesheet" type="text/css" />
 		<link href="/content/theme.css" rel="stylesheet" type="text/css" />
@@ -43,8 +43,8 @@
 		        <li>
 <a href="https://gitter.im/darthfubumvc/fubumvc?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://camo.githubusercontent.com/da2edb525cde1455a622c58c0effc3a90b9a181c/68747470733a2f2f6261646765732e6769747465722e696d2f4a6f696e253230436861742e737667" alt="Join the chat at https://gitter.im/darthfubumvc/fubumvc" data-canonical-src="https://badges.gitter.im/Join%20Chat.svg" style="max-width:100%;"></a>
 		        </li>
-		      	<li><a href="/documentation/basics/activators" title="Activators and Deactivators">Previous</a></li>
-		      	<li><a href="/documentation/servicebus" title="Service Bus Applications">Next</a></li>
+		      	<li><a href="/documentation/basics/diagnostics" title="Built In Diagnostics">Previous</a></li>
+		      	<li><a href="/documentation/basics/attributes" title="Configuration with Attributes">Next</a></li>
 		      </ul>
       <div class="navbar-form navbar-left" role="search">
         <div class="form-group">
@@ -59,7 +59,7 @@
 
 		  <div class="container">
 		  	<nav class="navbar-inverse">
-		  		<ol class="breadcrumb"><li><a href="/">FubuMVC</a></li><li><a href="/documentation">Documentation</a></li><li><a href="/documentation/basics">FubuMVC Basics</a></li><li class="active">Logging</li></ol>
+		  		<ol class="breadcrumb"><li><a href="/">FubuMVC</a></li><li><a href="/documentation">Documentation</a></li><li><a href="/documentation/basics">FubuMVC Basics</a></li><li class="active">Conventions and Policies</li></ol>
 		  	</nav>
 		  </div>
 
@@ -73,27 +73,44 @@
 
 		        </ul>
 
-		        	<h3 class="no-margin">Next</h3><p><a href="/documentation/servicebus">Service Bus Applications</a></p>
-		        	<h3 class="no-margin">Previous</h3><a href="/documentation/basics/activators">Activators and Deactivators</a></p>
+		        	<h3 class="no-margin">Next</h3><p><a href="/documentation/basics/attributes">Configuration with Attributes</a></p>
+		        	<h3 class="no-margin">Previous</h3><a href="/documentation/basics/diagnostics">Built In Diagnostics</a></p>
 
 		        </ul>
 		      </div><!--/left-->
 		      
 		      <!--right-->
 		      <div class="col-md-9">
-			      	<h1>Logging <a href="https://github.com/darthfubumvc/fubumvc/blob/master/documentation/documentation/basics/logging.md"  class="text-muted small pull-right fa fa-github" style="margin-top: 10px"> Edit on GitHub</a></h1>
+			      	<h1>Conventions and Policies <a href="https://github.com/darthfubumvc/fubumvc/blob/master/documentation/documentation/basics/policies.md"  class="text-muted small pull-right fa fa-github" style="margin-top: 10px"> Edit on GitHub</a></h1>
 			      
 			      	<hr />
 
 			      	<div id="main-pane">
-			      		<!--title: Logging-->
-<p><a href="https://jeremydmiller.com/2016/05/12/how-we-do-semantic-logging/">How we do Semantic Logging</a></p>
+			      		<!--title: Conventions and Policies-->
+<p>TODO(More here!)</p>
 <ul>
-<li>Explain semantic logging</li>
-<li>ILogger</li>
-<li>ILogListener</li>
-<li>Replace with Serilog in Jasper?</li>
+<li>Using BehaviorGraph</li>
+<li>Local v. Global</li>
+<li>Reordering policies</li>
+<li>Chain sources -- but not going to encourage folks to use this much anymore</li>
+<li>link to routing policies</li>
 </ul>
+<h2>Custom policies</h2>
+<div class="alert alert-info">Jasper will retain the "BehaviorGraph" configuration model, but will
+eliminate the IActionBehavior interface objects in favor of inline, generated code to be much
+more efficient than FubuMVC's current runtime pipeline.</div>
+<p>All the behavior chains (message handlers, HTTP endpoints, and job executions) are first modeled at
+application bootstrapping time through the <a href="/documentation/basics/behaviors">behavioral model</a> before
+they are &quot;baked&quot; into the underlying StructureMap container. This design opens up a lot of opportunities to
+extend FubuMVC applications by adding (or removing) extra behaviors to any chain.</p>
+<p>Let's say that you want to log a simple message for each chain execution. You might first build a custom
+<code>IActionBehavior</code> like this:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class ActionLogger : WrappingBehavior&#xD;&#xA;{&#xD;&#xA;    private readonly ICurrentChain _chain;&#xD;&#xA;    private readonly ILogger _logger;&#xD;&#xA;&#xD;&#xA;    public ActionLogger(ICurrentChain chain, ILogger logger)&#xD;&#xA;    {&#xD;&#xA;        _chain = chain;&#xD;&#xA;        _logger = logger;&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    protected override void invoke(Action action)&#xD;&#xA;    {&#xD;&#xA;        _logger.Debug($&quot;Running chain {_chain.Current.Title()}&quot;);&#xD;&#xA;        action();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>To get that behavior applied before any HTTP endpoint action or message handler, we could write our own
+<code>IConfigurationAction</code> like this one:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class MyLoggingPolicy : IConfigurationAction&#xD;&#xA;{&#xD;&#xA;    public void Configure(BehaviorGraph graph)&#xD;&#xA;    {&#xD;&#xA;        foreach (var chain in graph.Chains)&#xD;&#xA;        {&#xD;&#xA;            chain.WrapWith&lt;ActionLogger&gt;();&#xD;&#xA;        }&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>To add the custom policy to your application, use this code:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class FubuAppWithLoggingPolicy : FubuRegistry&#xD;&#xA;{&#xD;&#xA;    public FubuAppWithLoggingPolicy()&#xD;&#xA;    {&#xD;&#xA;        // Apply the MyLoggingPolicy to every&#xD;&#xA;        // chain in the system&#xD;&#xA;        Policies.Global.Add&lt;MyLoggingPolicy&gt;();&#xD;&#xA;&#xD;&#xA;        // or&#xD;&#xA;&#xD;&#xA;        // Apply the MyLoggingPolicy to only&#xD;&#xA;        // the chains discovered from the main application&#xD;&#xA;        // or a local extension&#xD;&#xA;        Policies.Local.Add&lt;MyLoggingPolicy&gt;();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
 
 			      	</div>
 
@@ -101,12 +118,12 @@
 
 			      	<nav>
 				        <span>
-				        	<strong>Previous: </strong><a href="/documentation/basics/activators">Activators and Deactivators</a>
+				        	<strong>Previous: </strong><a href="/documentation/basics/diagnostics">Built In Diagnostics</a>
 
 				        </span>
 				        <span class="pull-right">
 
-				        	<strong>Next: </strong><a href="/documentation/servicebus">Service Bus Applications</a>
+				        	<strong>Next: </strong><a href="/documentation/basics/attributes">Configuration with Attributes</a>
 
 				        </span>
 			      	</nav>

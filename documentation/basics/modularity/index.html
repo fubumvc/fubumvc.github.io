@@ -88,14 +88,48 @@
 			      	<div id="main-pane">
 			      		<!--Title:Modularity and Extensibility-->
 <!--Url:modularity-->
-<p>TODO(Write some content!)</p>
+<div class="alert alert-info">What's described here is what's remaining of the original 
+<a href="https://github.com/FubuMvcArchive/bottles">Bottles</a> extensibility framework after
+being merged into FubuMVC.Core. If you hear experienced FubuMVC users say the word "Bottle,"
+that just refers to a FubuMVC extension.</div>
+<p>FubuMVC has strong mechanisms for extensibility and modularity that go well beyond most other web
+or service bus frameworks. You can:</p>
 <ul>
-<li><code>[FubuModule]</code></li>
-<li>Extension discovery</li>
-<li>IFubuRegistryExtension</li>
-<li>Slices/areas w/ FubuPackageRegistry</li>
-<li>Custom policies or conventions</li>
+<li>Build extension assemblies that will be automatically pulled into the application at start up time</li>
+<li>Create reusable conventions or policies that can be imported into a FubuMVC application</li>
+<li>Author modular applications that implement features, &quot;areas&quot;, or &quot;slices&quot; in separate projects</li>
 </ul>
+<p>Extensions can include custom policies, new HTTP endpoints or message handlers, override or add application
+service registrations to StructureMap, and every other possible configuration you can do with <code>FubuRegistry</code>.</p>
+<p>See <a href="/documentation/basics/policies">Conventions and Policies</a> for more information on custom policies.</p>
+<h2>Extensions</h2>
+<p>To build a reusable extension for FubuMVC, utilize the <code>IFubuRegistryExtension</code> interface to express
+the desired additions or changes to the application. Using our chain logging example from the previous section,
+we could build this extension to both add the logging policy and override the built in logging with this:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class LoggingExtension : IFubuRegistryExtension&#xD;&#xA;{&#xD;&#xA;    public void Configure(FubuRegistry registry)&#xD;&#xA;    {&#xD;&#xA;        registry.Policies.Global.Add&lt;MyLoggingPolicy&gt;();&#xD;&#xA;&#xD;&#xA;        registry.Services.ReplaceService&lt;ILogger, MySpecialLogger&gt;();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>and add it to your application like this:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class MyFubuApp : FubuRegistry&#xD;&#xA;{&#xD;&#xA;    public MyFubuApp()&#xD;&#xA;    {&#xD;&#xA;        // Explicitly apply LoggingExtension&#xD;&#xA;        Import&lt;LoggingExtension&gt;();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<h2>Extension Assemblies</h2>
+<p>To mark an assembly as a valid FubuMVC extension, add an assembly level attribute called <code>FubuModule</code> to
+your assembly's <code>AssemblyInfo.cs</code> file (it doesn't have to be there, but that's idiomatic .Net).</p>
+<pre><code class="language-csharp">&#xD;&#xA;[assembly: FubuModule]&#xD;&#xA;</code></pre>
+<p>When a FubuMVC application is bootstrapped, it:</p>
+<ol>
+<li>Searches for any assemblies from the application's bin directory
+that are marked with the <code>[FubuModule]</code> assembly</li>
+<li>FubuMVC scans those assemblies for any public, concrete <code>IFubuRegistryExtension</code> class</li>
+<li>Each <code>IFubuRegistryExtension</code> class is applied to the main <code>FubuRegistry</code> of the application
+being built up</li>
+</ol>
+<h2>Slices/Areas with FubuPackageRegistry</h2>
+<div class="alert alert-warning">Please don't think of this feature as an equivalent to ASP.Net MVC's
+portable areas. There's <b>no coupling</b> from the main application to the extension and FubuMVC's extensibility
+model shown here is far more powerful.</div>
+<div class="alert alert-info">Make sure the constructor function of your package registry is public.</div>
+<p>FubuMVC has a built in mechanism to easily create vertical application slices using a built in form
+of <code>IFubuRegistryExtension</code> called <code>FubuPackageRegistry</code>. To build your own, just write a public
+subclass like this in your extension assembly:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class MyExtensionRegistry : FubuPackageRegistry&#xD;&#xA;{&#xD;&#xA;    public MyExtensionRegistry() : base(&quot;extension&quot;)&#xD;&#xA;    {&#xD;&#xA;        // Will locate any handlers or endpoints from this&#xD;&#xA;        // Assembly&#xD;&#xA;&#xD;&#xA;        // Apply the MyLoggingPolicy to only the&#xD;&#xA;        // chains from this extension&#xD;&#xA;        Policies.Local.Add&lt;MyLoggingPolicy&gt;();&#xD;&#xA;&#xD;&#xA;        // Can override services&#xD;&#xA;        Services.ReplaceService&lt;ILogger, MySpecialLogger&gt;();&#xD;&#xA;&#xD;&#xA;        // Can alter settings to the main app too&#xD;&#xA;        AlterSettings&lt;AssetSettings&gt;(_ =&gt;&#xD;&#xA;        {&#xD;&#xA;            _.AllowableExtensions.Add(&quot;.xls&quot;);&#xD;&#xA;        });&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
 
 			      	</div>
 

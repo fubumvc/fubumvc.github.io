@@ -87,16 +87,58 @@
 
 			      	<div id="main-pane">
 			      		<!--Title:Integration with StructureMap for IoC-->
-<div class="alert alert-info">FubuMVC no longer supports any IoC tool other than StructureMap. We may change that in Jasper,
-but for now, being StructureMap-only allowed us to greatly simplify and shrink down FubuMVC's internals.</div>
-<p>TODO(write something here)</p>
+<div class="alert alert-info">If you're wondering why FubuMVC uses StructureMap as its sole
+IoC tool, it's because <a href="http://jeremydmiller.com">Jeremy Miller</a> is the primary author of both tools.
+Owning the entire stack has been convenient on a couple different occasions for performance optimizations.</div>
+<p>FubuMVC no longer supports any IoC tool other than <a href="http://structuremap.github.io">StructureMap</a>. We may change that in Jasper,
+but for now, being StructureMap-only allowed us to greatly simplify and shrink down FubuMVC's internals for the 3.0 release.
+Moreover, FubuMVC uses <a href="http://structuremap.github.io/registration/auto-registration-and-conventions/">StructureMap's optimized type scanning</a> for its own internal bootstrapping.</p>
+<h2>Configuring Services</h2>
+<p>First off, let's say that you have your own service with an interface plus an implementation that you want
+to explicitly register in the underlying StructureMap container:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public interface IMyService{}&#xD;&#xA;public class MyService : IMyService{}&#xD;&#xA;</code></pre>
+<p>To add this service to the underlying application container, use the <code>FubuRegistry.Services</code> property as shown below:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class MyFubuApp : FubuRegistry&#xD;&#xA;{&#xD;&#xA;    public MyFubuApp()&#xD;&#xA;    {&#xD;&#xA;        // doing the registration inline&#xD;&#xA;        Services.For&lt;IMyService&gt;().Use&lt;MyService&gt;();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>The <code>FubuRegistry.Services</code> property is just a StructureMap <code>Registry</code> with some additional convenience methods
+for very common usages in FubuMVC applications.</p>
+<p>If your application is even remotely complicated though, we recommend using a separate <code>Registry</code> class
+for your custom services like this:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class MyServiceRegistry : Registry&#xD;&#xA;{&#xD;&#xA;    public MyServiceRegistry()&#xD;&#xA;    {&#xD;&#xA;        For&lt;IMyService&gt;().Use&lt;MyService&gt;();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;public class MyFubuApp2 : FubuRegistry&#xD;&#xA;{&#xD;&#xA;    public MyFubuApp2()&#xD;&#xA;    {&#xD;&#xA;        // doing the registration inline&#xD;&#xA;        Services.IncludeRegistry&lt;MyServiceRegistry&gt;();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<p>All of the service registration is done through <a href="http://structuremap.github.io/registration/registry-dsl/">StructureMap's Registry DSL mechanism</a>.</p>
+<h2>At Runtime</h2>
+<p>When a chain is executed at runtime, StructureMap builds or resolves the entire object graph of the various
+<a href="/documentation/basics/behaviors">behaviors</a>. That includes:</p>
 <ul>
-<li>how fubu builds up the container</li>
-<li>configuring services</li>
-<li>the usage of nested containers for scoping</li>
-<li>SM and disposal</li>
-<li>mention the Settings convention</li>
+<li><a href="/documentation/servicebus/handlers">Message handlers</a></li>
+<li><a href="/documentation/http/endpoints">Endpoints</a></li>
+<li><code>IActionBehavior</code>'s</li>
+<li>Any dependencies of the classes listed above</li>
 </ul>
+<p>To put that into some perspective, you can utilize StructureMap to inject your own service dependencies,
+FubuMVC services, and even request or message specific services too:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class MyEndpoint&#xD;&#xA;{&#xD;&#xA;    private readonly IMyService _service;&#xD;&#xA;    private readonly IHttpRequest _request;&#xD;&#xA;&#xD;&#xA;    // IHttpRequest would point at the current request&#xD;&#xA;    public MyEndpoint(IMyService service, IHttpRequest request)&#xD;&#xA;    {&#xD;&#xA;        _service = service;&#xD;&#xA;        _request = request;&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
+<div class="alert alert-info">The proposed Jasper architecture will reduce and simplify
+the usage of StructureMap at runtime by trying to drastically reduce the number of objects built by
+StructureMap and attempting to make much more of the service resolution lazy.</div>
+<h2>Per Request or Message Nested container</h2>
+<p>When FubuMVC executes any behavior chain by handling an HTTP request, processing a message in the service bus, or executing a job, it utilizes
+StructureMap's <a href="http://structuremap.github.io/the-container/nested-containers/">nested container</a> feature to
+both manage the scoping of services and automatically handle the disposal of any service created during a
+chain execution. Unless a service is registered with a non-default lifecycle, you can safely assume that it is
+scoped to the request/message/job execution.</p>
+<h2>Service disposal</h2>
+<p>As mentioned in the previous section, StructureMap automatically tracks and disposes any objects created directly
+by the nested container as part of chain execution. Otherwise, services registered as singleton scoped are disposed
+when the StructureMap <code>IContainer</code> is disposed, which in turn is disposed as part of disposing a <code>FubuRuntime</code>.</p>
+<h2>Overriding System Dependencies</h2>
+<p>It is perfectly valid and possible to override FubuMVC's own services
+in your application. While this has been frequently useful, do this with some caution.</p>
+<p>Maybe the most common usage of this is to replace FubuMVC's built in JSON serialization mechanism.
+The out of the box serialization uses <a href="http://www.newtonsoft.com/json">Newtonsoft.Json</a>, but what
+if you want to use an alternative like <a href="https://github.com/kevin-montrose/Jil">Jil</a> instead?</p>
+<p>Assuming that you have a class named <code>MyJilJsonSerializer</code> that implements FubuMVC's built in <code>IJsonSerializer</code>
+interface, you can use your own service like so:</p>
+<pre><code class="language-csharp">&#xD;&#xA;public class MyFubuApp3 : FubuRegistry&#xD;&#xA;{&#xD;&#xA;    public MyFubuApp3()&#xD;&#xA;    {&#xD;&#xA;        Services&#xD;&#xA;            .For&lt;IJsonSerializer&gt;()&#xD;&#xA;            .Use&lt;MyJilJsonSerializer&gt;();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</code></pre>
 
 			      	</div>
 
